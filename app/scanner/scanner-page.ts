@@ -92,7 +92,7 @@ const resetPauseState = () => {
   isScanningPaused = false;
   setVisible(pageRef.getViewById('resumeOverlay'), false);
   const frozenImage = pageRef.getViewById<Image>('frozenImage');
-  frozenImage.src = null;
+  frozenImage.src = '';
   setVisible(frozenImage, false);
 };
 

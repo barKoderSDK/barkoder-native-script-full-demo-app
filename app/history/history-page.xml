@@ -1,0 +1,21 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+  <AbsoluteLayout>
+    <Image class="page-bg" src="~/assets/images/BG.png" stretch="aspectFill" />
+    <GridLayout class="page-shell" rows="auto,*">
+      <GridLayout class="screen-header page-safe" row="0" columns="auto,*,auto">
+        <GridLayout id="backButton" class="back-button" col="0">
+          <Image width="20" height="20" src="~/assets/icons/chevron.png" stretch="aspectFit" />
+        </GridLayout>
+        <Label class="screen-title" col="1" text="Recent Scans" />
+        <GridLayout col="2" />
+      </GridLayout>
+
+      <GridLayout row="1">
+        <ActivityIndicator id="loadingIndicator" busy="true" color="#E52E4c" verticalAlignment="center" horizontalAlignment="center" />
+        <ScrollView id="historyScroll" class="hidden">
+          <StackLayout id="historySections" class="history-content" />
+        </ScrollView>
+      </GridLayout>
+    </GridLayout>
+  </AbsoluteLayout>
+</Page>

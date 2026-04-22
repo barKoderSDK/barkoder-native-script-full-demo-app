@@ -1,10 +1,48 @@
-<Page navigatingTo="onNavigatingTo" xmlns="http://schemas.nativescript.org/tns.xsd">
-    
-    <ActionBar>
-        <Label text="Home" />
-    </ActionBar>
+<Page
+  xmlns="http://schemas.nativescript.org/tns.xsd"
+  navigatingTo="navigatingTo">
+  <AbsoluteLayout>
+    <Image class="page-bg" src="~/assets/images/BG.png" stretch="aspectFill" />
+    <GridLayout class="page-shell" rows="auto,*,auto">
+      <GridLayout class="topbar page-safe" row="0" columns="*,auto,*">
+        <GridLayout col="0" />
+        <Image class="topbar-logo" col="1" src="~/assets/images/logo_barkoder.png" stretch="aspectFit" />
+        <GridLayout col="2" />
+      </GridLayout>
 
-    <GridLayout>
-        <!-- Add your page content here -->
+      <ScrollView row="1">
+        <StackLayout id="homeSections" class="page-content" />
+      </ScrollView>
+
+      <GridLayout class="bottom-bar" row="2" columns="*,*,*">
+        <StackLayout id="recentTab" class="bottom-tab" col="0">
+          <GridLayout class="nav-button-shell">
+            <Image class="bottom-tab-icon" src="~/assets/icons/recent.png" stretch="aspectFit" />
+          </GridLayout>
+          <Label class="bottom-tab-label" text="Recent" />
+        </StackLayout>
+
+        <StackLayout id="anyscanTab" class="bottom-tab" col="1">
+          <GridLayout class="nav-button-shell nav-button-shell-active">
+            <Image class="nav-button-icon-active" src="~/assets/icons/start.png" stretch="aspectFit" />
+          </GridLayout>
+          <Label class="bottom-tab-label" text="Anyscan" />
+        </StackLayout>
+
+        <StackLayout id="aboutTab" class="bottom-tab" col="2">
+          <GridLayout class="nav-button-shell">
+            <Image class="bottom-tab-icon" src="~/assets/icons/info.png" stretch="aspectFit" />
+          </GridLayout>
+          <Label class="bottom-tab-label" text="About" />
+        </StackLayout>
+      </GridLayout>
     </GridLayout>
+
+    <GridLayout id="loadingOverlay" class="loading-overlay hidden" width="100%" height="100%">
+      <StackLayout class="loading-card" horizontalAlignment="center" verticalAlignment="center">
+        <ActivityIndicator busy="true" color="#E52E4c" />
+        <Label class="loading-text" text="Processing image..." />
+      </StackLayout>
+    </GridLayout>
+  </AbsoluteLayout>
 </Page>

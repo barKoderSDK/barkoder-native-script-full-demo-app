@@ -1,0 +1,40 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+  <AbsoluteLayout>
+    <Image class="page-bg" src="~/assets/images/BG.png" stretch="aspectFill" />
+    <GridLayout class="page-shell" rows="auto,*,auto">
+      <GridLayout class="screen-header page-safe" row="0" columns="auto,*,auto">
+        <GridLayout id="backButton" class="back-button" col="0">
+          <Image width="20" height="20" src="~/assets/icons/chevron.png" stretch="aspectFit" />
+        </GridLayout>
+        <Label class="screen-title" col="1" text="Barcode Details" />
+        <GridLayout col="2" />
+      </GridLayout>
+
+      <ScrollView row="1">
+        <StackLayout class="details-content">
+          <GridLayout class="image-card">
+            <Image id="barcodeImage" class="barcode-preview hidden" stretch="aspectFit" />
+            <StackLayout id="barcodePlaceholder" horizontalAlignment="center" verticalAlignment="center">
+              <GridLayout class="placeholder-wrap">
+                <Image id="placeholderIcon" class="placeholder-icon" src="~/assets/icons/icon_2d.png" stretch="aspectFit" />
+              </GridLayout>
+            </StackLayout>
+          </GridLayout>
+          <Label class="section-label" text="DATA" />
+          <StackLayout id="detailsContent" marginTop="8" />
+        </StackLayout>
+      </ScrollView>
+
+      <GridLayout class="details-bottom-bar" row="2" columns="*,*">
+        <StackLayout id="copyButton" class="details-action" col="0">
+          <Image class="details-action-icon" src="~/assets/icons/icon_copy.png" stretch="aspectFit" />
+          <Label class="details-action-text" text="Copy" />
+        </StackLayout>
+        <StackLayout id="searchButton" class="details-action" col="1">
+          <Image class="details-action-icon" src="~/assets/icons/icon_search.png" stretch="aspectFit" />
+          <Label class="details-action-text" text="Search" />
+        </StackLayout>
+      </GridLayout>
+    </GridLayout>
+  </AbsoluteLayout>
+</Page>

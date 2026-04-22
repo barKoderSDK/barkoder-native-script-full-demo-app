@@ -1,15 +1,27 @@
 {
-  "name": "barkoder_app_nativeScript_tmp",
+  "name": "barkoder_app_nativescript",
   "main": "app/app.ts",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
+  "scripts": {
+    "build:android": "nativescript build android",
+    "build:ios": "nativescript build ios",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@nativescript/core": "~9.0.0",
-    "@nativescript/theme": "^3.1.0"
+    "@nativescript/imagepicker": "^4.0.0",
+    "@nativescript/social-share": "^2.0.0",
+    "@nativescript/theme": "^3.1.0",
+    "barkoder-nativescript": "^1.6.8"
   },
   "devDependencies": {
+    "@nativescript/android": "~9.0.2",
+    "@nativescript/ios": "~9.0.3",
     "@nativescript/types": "~9.0.0",
     "@nativescript/webpack": "~5.0.25",
+    "glob": "^13.0.0",
+    "nativescript": "^9.0.5",
     "typescript": "~5.4.0"
   }
 }

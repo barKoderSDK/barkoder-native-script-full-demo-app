@@ -1,0 +1,47 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+  <AbsoluteLayout>
+    <Image class="page-bg" src="~/assets/images/BG.png" stretch="aspectFill" />
+    <GridLayout class="page-shell" rows="auto,*">
+      <GridLayout class="screen-header white page-safe" row="0" columns="auto,*,auto">
+        <GridLayout id="backButton" class="back-button" col="0">
+          <Image width="20" height="20" src="~/assets/icons/chevron.png" stretch="aspectFit" />
+        </GridLayout>
+        <Image class="topbar-logo" col="1" src="~/assets/images/logo_barkoder.png" stretch="aspectFit" />
+        <GridLayout col="2" class="header-spacer" />
+      </GridLayout>
+
+      <ScrollView row="1">
+        <StackLayout class="about-content">
+          <StackLayout class="content-card">
+            <Label class="content-title" text="Barcode Scanner SDK by barKoder" />
+            <Label id="aboutDescription" class="content-text" textWrap="true" />
+            <Button id="trialButton" class="cta-button" text="Get a free trial demo" />
+          </StackLayout>
+
+          <StackLayout class="content-card">
+            <Label class="about-info-title" text="Info" />
+            <GridLayout class="about-info-row" columns="*,auto">
+              <Label class="about-info-label" col="0" text="Device ID" />
+              <Label id="deviceIdValue" class="about-info-value" col="1" />
+            </GridLayout>
+            <StackLayout class="divider" />
+            <GridLayout class="about-info-row" columns="*,auto">
+              <Label class="about-info-label" col="0" text="App Version" />
+              <Label id="appVersionValue" class="about-info-value version" col="1" />
+            </GridLayout>
+            <StackLayout class="divider" />
+            <GridLayout class="about-info-row" columns="*,auto">
+              <Label class="about-info-label" col="0" text="SDK Version" />
+              <Label id="sdkVersionValue" class="about-info-value" col="1" />
+            </GridLayout>
+            <StackLayout class="divider" />
+            <GridLayout class="about-info-row" columns="*,auto">
+              <Label class="about-info-label" col="0" text="Lib Version" />
+              <Label id="libVersionValue" class="about-info-value" col="1" />
+            </GridLayout>
+          </StackLayout>
+        </StackLayout>
+      </ScrollView>
+    </GridLayout>
+  </AbsoluteLayout>
+</Page>

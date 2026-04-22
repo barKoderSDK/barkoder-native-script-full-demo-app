@@ -1,0 +1,116 @@
+<Page
+  xmlns="http://schemas.nativescript.org/tns.xsd"
+  xmlns:Barkoder="barkoder-nativescript/barkoder-nativescript.common"
+  navigatingTo="navigatingTo"
+  navigatingFrom="navigatingFrom">
+  <GridLayout class="scanner-page" rows="*">
+    <Barkoder:BarkoderView id="barkoderView" class="scanner-view" />
+    <Image id="frozenImage" class="scanner-view hidden" stretch="aspectFill" />
+
+    <GridLayout class="scanner-overlay" rows="auto,*,auto">
+      <GridLayout id="topBar" row="0" class="topbar page-safe" width="100%" columns="*,auto,*">
+        <Label id="closeButton" class="topbar-icon light" col="0" text="&#215;" horizontalAlignment="left" />
+        <Image class="topbar-logo" col="1" src="~/assets/images/logo_barkoder_white.png" stretch="aspectFit" />
+        <Label id="settingsButton" class="topbar-icon light" col="2" text="&#9881;" horizontalAlignment="right" />
+      </GridLayout>
+
+      <StackLayout id="bottomControls" row="2" class="controls-shell" width="100%">
+        <StackLayout id="typesChip" class="types-chip">
+          <Label id="typesChipText" class="types-chip-text" textWrap="true" />
+        </StackLayout>
+        <GridLayout class="controls-row" columns="auto,auto,auto" horizontalAlignment="center">
+          <GridLayout id="zoomButton" class="control-button" col="0">
+            <Image id="zoomIcon" class="control-icon" src="~/assets/icons/zoom_out.png" stretch="aspectFit" />
+          </GridLayout>
+          <GridLayout id="flashButton" class="control-button" col="1">
+            <Image id="flashIcon" class="control-icon" src="~/assets/icons/flash_on.png" stretch="aspectFit" />
+          </GridLayout>
+          <GridLayout id="cameraButton" class="control-button" col="2">
+            <Image class="control-icon" src="~/assets/icons/camera_switch.png" stretch="aspectFit" />
+          </GridLayout>
+        </GridLayout>
+      </StackLayout>
+
+      <GridLayout id="resultSheet" row="2" class="result-sheet hidden" width="100%" rows="auto,auto,auto" verticalAlignment="bottom">
+        <GridLayout row="0" columns="*,auto">
+          <StackLayout col="0">
+            <Label id="resultTitleText" class="result-title-text" text="Scan Results" />
+            <Label id="resultHeaderText" class="result-header-text" />
+          </StackLayout>
+          <Label id="resultCloseButton" class="result-close-button" col="1" text="&#215;" />
+        </GridLayout>
+        <ScrollView id="resultItemsScroll" row="1" class="result-items-scroll" height="198">
+          <StackLayout id="resultItems" />
+        </ScrollView>
+        <GridLayout row="2" columns="*,*,*" class="sheet-actions-row">
+          <StackLayout id="copyButton" class="sheet-action-button" col="0">
+            <Image class="sheet-action-icon" src="~/assets/icons/icon_copy.png" stretch="aspectFit" />
+            <Label class="sheet-action-text" text="Copy" />
+          </StackLayout>
+          <StackLayout id="csvButton" class="sheet-action-button" col="1">
+            <Image class="sheet-action-icon" src="~/assets/icons/icon_csv.png" stretch="aspectFit" />
+            <Label class="sheet-action-text" text="CSV" />
+          </StackLayout>
+          <StackLayout id="expandButton" class="sheet-action-button" col="2">
+            <Image class="sheet-action-icon" src="~/assets/icons/expand_all.png" stretch="aspectFit" />
+            <Label id="expandButtonLabel" class="sheet-action-text" text="Expand" />
+          </StackLayout>
+        </GridLayout>
+      </GridLayout>
+
+      <GridLayout id="expandedSheetOverlay" rowSpan="3" class="result-sheet-overlay hidden" width="100%" height="100%" rows="*,auto">
+        <GridLayout row="1" class="result-sheet expanded" width="100%" rows="auto,*,auto" verticalAlignment="bottom">
+          <GridLayout row="0" columns="*,auto">
+            <StackLayout col="0">
+              <Label id="expandedTitleText" class="result-title-text" text="Scan Results" />
+              <Label id="expandedHeaderText" class="result-header-text" />
+            </StackLayout>
+            <Label id="expandedCloseButton" class="result-close-button" col="1" text="&#215;" />
+          </GridLayout>
+          <ScrollView row="1" class="expanded-results-scroll">
+            <StackLayout id="expandedResultItems" />
+          </ScrollView>
+          <GridLayout row="2" columns="*,*,*" class="sheet-actions-row expanded-actions-row">
+            <StackLayout id="expandedCopyButton" class="sheet-action-button" col="0">
+              <Image class="sheet-action-icon" src="~/assets/icons/icon_copy.png" stretch="aspectFit" />
+              <Label class="sheet-action-text" text="Copy" />
+            </StackLayout>
+            <StackLayout id="expandedCsvButton" class="sheet-action-button" col="1">
+              <Image class="sheet-action-icon" src="~/assets/icons/icon_csv.png" stretch="aspectFit" />
+              <Label class="sheet-action-text" text="CSV" />
+            </StackLayout>
+            <StackLayout id="collapseButton" class="sheet-action-button accent" col="2">
+              <Image class="sheet-action-icon" src="~/assets/icons/expand_all.png" stretch="aspectFit" />
+              <Label class="sheet-action-text" text="Collapse" />
+            </StackLayout>
+          </GridLayout>
+        </GridLayout>
+      </GridLayout>
+
+      <GridLayout id="settingsOverlay" rowSpan="3" class="overlay-screen hidden" width="100%" height="100%">
+        <AbsoluteLayout>
+          <Image class="page-bg" src="~/assets/images/BG.png" stretch="aspectFill" />
+          <GridLayout class="page-shell" rows="auto,*">
+            <GridLayout class="screen-header page-safe" row="0" columns="auto,*,auto">
+              <GridLayout id="settingsBackButton" class="back-button settings-back-button" col="0">
+                <Image width="20" height="20" src="~/assets/icons/chevron.png" stretch="aspectFit" />
+              </GridLayout>
+              <Label class="screen-title settings-screen-title" col="1" text="Settings" />
+              <Label class="settings-header-more" col="2" text="..." horizontalAlignment="right" />
+            </GridLayout>
+            <ScrollView row="1">
+              <StackLayout id="settingsContent" class="settings-scroll" />
+            </ScrollView>
+          </GridLayout>
+        </AbsoluteLayout>
+      </GridLayout>
+    </GridLayout>
+
+    <GridLayout id="resumeOverlay" class="overlay-screen hidden">
+      <GridLayout id="pauseShell" class="pause-shell" columns="auto,auto">
+        <Image col="0" width="18" height="18" src="~/assets/icons/touch_icon.png" stretch="aspectFit" />
+        <Label col="1" class="pause-text" text="Tap anywhere to continue" />
+      </GridLayout>
+    </GridLayout>
+  </GridLayout>
+</Page>

@@ -298,6 +298,14 @@ const applyEnabledTypes = () => {
   barkoderView.setBarcodeTypeEnabled(getEnabledDecoders());
 };
 
+const applyArSetting = (label: string, apply: () => void) => {
+  try {
+    apply();
+  } catch (error) {
+    console.error(`Failed to apply AR setting: ${label}`, error);
+  }
+};
+
 const applyScannerConfiguration = () => {
   barkoderView.setLicenseKey(BARKODER_LICENSE_KEY);
   barkoderView.setImageResultEnabled(true);
@@ -337,17 +345,25 @@ const applyScannerConfiguration = () => {
     barkoderView.setDatamatrixDpmModeEnabled(true);
     barkoderView.setRegionOfInterest(ROI_DPM.x, ROI_DPM.y, ROI_DPM.width, ROI_DPM.height);
   } else if (mode === MODES.AR_MODE) {
-    barkoderView.setBarkoderARMode(settings.arMode ?? BarkoderConstants.BarkoderARMode.InteractiveEnabled);
-    barkoderView.setBarkoderARLocationType(settings.arLocationType ?? BarkoderConstants.BarkoderARLocationType.NONE);
-    barkoderView.setBarkoderARHeaderShowMode(
-      settings.arHeaderShowMode ?? BarkoderConstants.BarkoderARHeaderShowMode.ONSELECTED,
+    applyArSetting('mode', () =>
+      barkoderView.setBarkoderARMode(settings.arMode ?? BarkoderConstants.BarkoderARMode.InteractiveEnabled),
     );
-    barkoderView.setBarkoderARoverlayRefresh(
-      settings.arOverlayRefresh ?? BarkoderConstants.BarkoderAROverlayRefresh.NORMAL,
+    applyArSetting('location type', () =>
+      barkoderView.setBarkoderARLocationType(settings.arLocationType ?? BarkoderConstants.BarkoderARLocationType.NONE),
     );
-    barkoderView.setARDoubleTapToFreezeEnabled(!!settings.arDoubleTapToFreeze);
-    barkoderView.setARSelectedLocationLineColor('#00FF00');
-    barkoderView.setARNonSelectedLocationLineColor('#FF0000');
+    applyArSetting('header show mode', () =>
+      barkoderView.setBarkoderARHeaderShowMode(
+        settings.arHeaderShowMode ?? BarkoderConstants.BarkoderARHeaderShowMode.ONSELECTED,
+      ),
+    );
+    applyArSetting('overlay refresh', () =>
+      barkoderView.setBarkoderARoverlayRefresh(
+        settings.arOverlayRefresh ?? BarkoderConstants.BarkoderAROverlayRefresh.NORMAL,
+      ),
+    );
+    applyArSetting('double tap to freeze', () =>
+      barkoderView.setARDoubleTapToFreezeEnabled(!!settings.arDoubleTapToFreeze),
+    );
   } else if (mode === MODES.DOTCODE) {
     barkoderView.setRegionOfInterest(ROI_DOTCODE.x, ROI_DOTCODE.y, ROI_DOTCODE.width, ROI_DOTCODE.height);
   }

@@ -1,10 +1,10 @@
 <Page
   xmlns="http://schemas.nativescript.org/tns.xsd"
-  xmlns:Barkoder="barkoder-nativescript/barkoder-nativescript.common"
+  xmlns:Barkoder="~/components/licensed-barkoder-view"
   navigatingTo="navigatingTo"
   navigatingFrom="navigatingFrom">
   <GridLayout class="scanner-page" rows="*">
-    <Barkoder:BarkoderView id="barkoderView" class="scanner-view" />
+    <Barkoder:LicensedBarkoderView id="barkoderView" class="scanner-view" />
     <Image id="frozenImage" class="scanner-view hidden" stretch="aspectFill" />
 
     <GridLayout class="scanner-overlay" rows="auto,*,auto">
@@ -93,7 +93,7 @@
           <GridLayout class="page-shell" rows="auto,*">
             <GridLayout class="screen-header page-safe" row="0" columns="auto,*,auto">
               <GridLayout id="settingsBackButton" class="back-button settings-back-button" col="0">
-                <Image width="20" height="20" src="~/assets/icons/chevron.png" stretch="aspectFit" />
+                <Image class="back-icon" src="~/assets/icons/chevron.png" stretch="aspectFit" />
               </GridLayout>
               <Label class="screen-title settings-screen-title" col="1" text="Settings" />
               <Label class="settings-header-more" col="2" text="..." horizontalAlignment="right" />

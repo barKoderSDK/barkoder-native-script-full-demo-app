@@ -1,7 +1,9 @@
 <Page
   xmlns="http://schemas.nativescript.org/tns.xsd"
+  xmlns:Barkoder="~/components/licensed-barkoder-view"
   navigatingTo="navigatingTo">
   <AbsoluteLayout>
+    <Barkoder:LicensedBarkoderView id="galleryBarkoderView" width="1" height="1" left="-10" top="-10" opacity="0" />
     <Image class="page-bg" src="~/assets/images/BG.png" stretch="aspectFill" />
     <GridLayout class="page-shell" rows="auto,*,auto">
       <GridLayout class="topbar page-safe" row="0" columns="*,auto,*">

@@ -4,7 +4,7 @@
     <GridLayout class="page-shell" rows="auto,*">
       <GridLayout class="screen-header white page-safe" row="0" columns="auto,*,auto">
         <GridLayout id="backButton" class="back-button" col="0">
-          <Image width="20" height="20" src="~/assets/icons/chevron.png" stretch="aspectFit" />
+          <Image class="back-icon" src="~/assets/icons/chevron.png" stretch="aspectFit" />
         </GridLayout>
         <Image class="topbar-logo" col="1" src="~/assets/images/logo_barkoder.png" stretch="aspectFit" />
         <GridLayout col="2" class="header-spacer" />

@@ -8,6 +8,11 @@ export const getInitialEnabledTypes = (mode: string): Record<string, boolean> =>
   const types: Record<string, boolean> = {};
 
   ALL_BARCODE_TYPES.forEach((type) => {
+    if (mode === MODES.MRZ) {
+      types[type.id] = type.id === 'idDocument';
+      return;
+    }
+
     if (type.id === 'idDocument') {
       types[type.id] = false;
       return;
@@ -17,12 +22,10 @@ export const getInitialEnabledTypes = (mode: string): Record<string, boolean> =>
       types[type.id] = BARCODE_TYPES_1D.some((item) => item.id === type.id);
     } else if (mode === MODES.MODE_2D) {
       types[type.id] = BARCODE_TYPES_2D.some((item) => item.id === type.id) && type.id !== 'ocrText';
-    } else if (mode === MODES.CONTINUOUS || mode === MODES.ANYSCAN) {
+    } else if (mode === MODES.CONTINUOUS || mode === MODES.ANYSCAN || mode === MODES.GALLERY) {
       types[type.id] = type.id !== 'ocrText';
     } else if (mode === MODES.DOTCODE) {
       types[type.id] = type.id === 'dotcode';
-    } else if (mode === MODES.MRZ) {
-      types[type.id] = type.id === 'idDocument';
     } else if (mode === MODES.VIN) {
       types[type.id] = ['code39', 'code128', 'qr', 'datamatrix', 'ocrText'].includes(type.id);
     } else if (mode === MODES.AR_MODE) {
@@ -86,6 +89,8 @@ export const getInitialSettings = (mode: string): ScannerSettings => {
       };
     case MODES.GALLERY:
       return { ...baseSettings, decodingSpeed: BarkoderConstants.DecodingSpeed.Rigorous };
+    case MODES.MRZ:
+      return { ...baseSettings, regionOfInterest: true };
     case MODES.DOTCODE:
       return {
         ...baseSettings,

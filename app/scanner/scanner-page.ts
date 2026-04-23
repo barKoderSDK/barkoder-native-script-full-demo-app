@@ -10,7 +10,6 @@ import {
   StackLayout,
   Utils,
 } from '@nativescript/core';
-import { BARKODER_LICENSE_KEY } from '../config';
 import { ALL_BARCODE_TYPES, BARCODE_TYPES_1D, BARCODE_TYPES_2D, MODES } from '../constants';
 import { HistoryService } from '../services/history-service';
 import { SettingsService } from '../services/settings-service';
@@ -30,12 +29,15 @@ let isFlashOn = false;
 let zoomLevel = 1.0;
 let selectedCamera = BarkoderConstants.BarkoderCameraPosition.Back;
 let isScanningPaused = false;
+let isSettingsScannerPaused = false;
+let shouldRestartScannerAfterSettings = false;
 let openDropdownKey: string | null = null;
 let isResultSheetExpanded = false;
 let isResultSheetHidden = false;
 
 const ROI_DEFAULT = { x: 22, y: 30, width: 56, height: 20 };
-const ROI_VIN = { x: 12, y: 38, width: 76, height: 18 };
+const ROI_MRZ = { x: 8, y: 38, width: 84, height: 9 };
+const ROI_VIN = { x: 0, y: 30, width: 100, height: 40 };
 const ROI_DPM = { x: 42, y: 42, width: 16, height: 8 };
 const ROI_DOTCODE = { x: 34, y: 42, width: 32, height: 8 };
 const RESULT_CARD_HEIGHT = 60;
@@ -44,6 +46,13 @@ const RESULT_SHEET_BASE_HEIGHT = 130;
 
 const sanitizeEnabledTypes = (types: Record<string, boolean>) => {
   const sanitized = { ...types };
+
+  if (mode === MODES.MRZ) {
+    ALL_BARCODE_TYPES.forEach((type) => {
+      sanitized[type.id] = type.id === 'idDocument';
+    });
+    return sanitized;
+  }
 
   if (mode !== MODES.VIN) {
     sanitized.ocrText = false;
@@ -54,9 +63,19 @@ const sanitizeEnabledTypes = (types: Record<string, boolean>) => {
   return sanitized;
 };
 
+const sanitizeScannerSettings = (scannerSettings: ScannerSettings) => {
+  if (mode === MODES.MRZ) {
+    return { ...scannerSettings, regionOfInterest: true };
+  }
+
+  return scannerSettings;
+};
+
 const setVisible = (view: any, visible: boolean) => {
   view.visibility = visible ? 'visible' : 'collapse';
 };
+
+const isSettingsOverlayVisible = () => pageRef?.getViewById<any>('settingsOverlay')?.visibility === 'visible';
 
 const getEnabledDecoders = () =>
   ALL_BARCODE_TYPES.filter((type) => enabledTypes[type.id]).map((type) => type.decoder);
@@ -307,7 +326,6 @@ const applyArSetting = (label: string, apply: () => void) => {
 };
 
 const applyScannerConfiguration = () => {
-  barkoderView.setLicenseKey(BARKODER_LICENSE_KEY);
   barkoderView.setImageResultEnabled(true);
   barkoderView.setLocationInImageResultEnabled(true);
   barkoderView.setPinchToZoomEnabled(settings.pinchToZoom);
@@ -324,15 +342,9 @@ const applyScannerConfiguration = () => {
   barkoderView.setBarcodeThumbnailOnResultEnabled(true);
   barkoderView.setMaximumResultsCount(200);
   barkoderView.setThresholdBetweenDuplicatesScans(settings.continuousScanning ? settings.continuousThreshold ?? 0 : 0);
+
+  barkoderView.setCustomOption('enable_ocr_functionality', mode === MODES.VIN && enabledTypes.ocrText ? 1 : 0);
   applyEnabledTypes();
-
-  if (settings.regionOfInterest && mode !== MODES.VIN && mode !== MODES.DPM) {
-    barkoderView.setRegionOfInterest(ROI_DEFAULT.x, ROI_DEFAULT.y, ROI_DEFAULT.width, ROI_DEFAULT.height);
-  }
-
-  if (mode !== MODES.VIN) {
-    barkoderView.setCustomOption('enable_ocr_functionality', 0);
-  }
 
   if (mode === MODES.MULTISCAN) {
     barkoderView.setMulticodeCachingDuration(3000);
@@ -340,10 +352,11 @@ const applyScannerConfiguration = () => {
   } else if (mode === MODES.VIN) {
     barkoderView.setEnableVINRestrictions(true);
     barkoderView.setRegionOfInterest(ROI_VIN.x, ROI_VIN.y, ROI_VIN.width, ROI_VIN.height);
-    barkoderView.setCustomOption('enable_ocr_functionality', enabledTypes.ocrText ? 1 : 0);
   } else if (mode === MODES.DPM) {
     barkoderView.setDatamatrixDpmModeEnabled(true);
     barkoderView.setRegionOfInterest(ROI_DPM.x, ROI_DPM.y, ROI_DPM.width, ROI_DPM.height);
+  } else if (mode === MODES.MRZ) {
+    barkoderView.setRegionOfInterest(ROI_MRZ.x, ROI_MRZ.y, ROI_MRZ.width, ROI_MRZ.height);
   } else if (mode === MODES.AR_MODE) {
     applyArSetting('mode', () =>
       barkoderView.setBarkoderARMode(settings.arMode ?? BarkoderConstants.BarkoderARMode.InteractiveEnabled),
@@ -366,6 +379,8 @@ const applyScannerConfiguration = () => {
     );
   } else if (mode === MODES.DOTCODE) {
     barkoderView.setRegionOfInterest(ROI_DOTCODE.x, ROI_DOTCODE.y, ROI_DOTCODE.width, ROI_DOTCODE.height);
+  } else if (settings.regionOfInterest) {
+    barkoderView.setRegionOfInterest(ROI_DEFAULT.x, ROI_DEFAULT.y, ROI_DEFAULT.width, ROI_DEFAULT.height);
   }
 };
 
@@ -427,6 +442,12 @@ const resumeScanning = () => {
   startScanning();
 };
 
+const resumeScanningAfterSettings = () => {
+  isSettingsScannerPaused = false;
+  resetPauseState();
+  startScanning();
+};
+
 const persistAndRefresh = (restart = false) => {
   saveCurrentSettings();
   applyScannerConfiguration();
@@ -435,6 +456,11 @@ const persistAndRefresh = (restart = false) => {
   updateResultsUi();
 
   if (restart) {
+    if (isSettingsOverlayVisible()) {
+      shouldRestartScannerAfterSettings = true;
+      return;
+    }
+
     startScanning();
   }
 };
@@ -795,7 +821,7 @@ const buildSettingsContent = () => {
   resetLabel.text = 'Reset All Settings';
   resetWrap.addChild(resetLabel);
   resetWrap.on('tap', () => {
-    settings = getInitialSettings(mode);
+    settings = sanitizeScannerSettings(getInitialSettings(mode));
     enabledTypes = getInitialEnabledTypes(mode);
     openDropdownKey = null;
     persistAndRefresh(true);
@@ -805,7 +831,11 @@ const buildSettingsContent = () => {
 };
 
 const openSettings = () => {
-  barkoderView.stopScanning();
+  if (!isScanningPaused && !isSettingsScannerPaused) {
+    barkoderView.pauseScanning();
+    isSettingsScannerPaused = true;
+  }
+
   setVisible(pageRef.getViewById('settingsOverlay'), true);
   openDropdownKey = null;
   buildSettingsContent();
@@ -813,8 +843,15 @@ const openSettings = () => {
 
 const closeSettings = () => {
   setVisible(pageRef.getViewById('settingsOverlay'), false);
-  if (!isScanningPaused) {
-    startScanning();
+
+  if (shouldRestartScannerAfterSettings) {
+    shouldRestartScannerAfterSettings = false;
+    resumeScanningAfterSettings();
+    return;
+  }
+
+  if (isSettingsScannerPaused || isScanningPaused) {
+    resumeScanningAfterSettings();
   }
 };
 
@@ -934,17 +971,19 @@ export function navigatingTo(args: { object: Page }) {
   zoomLevel = 1.0;
   selectedCamera = BarkoderConstants.BarkoderCameraPosition.Back;
   isScanningPaused = false;
+  isSettingsScannerPaused = false;
+  shouldRestartScannerAfterSettings = false;
   openDropdownKey = null;
   isResultSheetExpanded = false;
   isResultSheetHidden = false;
 
   enabledTypes = sanitizeEnabledTypes(getInitialEnabledTypes(mode));
-  settings = getInitialSettings(mode);
+  settings = sanitizeScannerSettings(getInitialSettings(mode));
 
   const saved = SettingsService.getSettings(mode);
   if (saved) {
     enabledTypes = sanitizeEnabledTypes({ ...enabledTypes, ...saved.enabledTypes });
-    settings = { ...settings, ...saved.scannerSettings };
+    settings = sanitizeScannerSettings({ ...settings, ...saved.scannerSettings });
   }
 
   bindUi();
@@ -962,5 +1001,7 @@ export function navigatingTo(args: { object: Page }) {
 
 export function navigatingFrom() {
   saveCurrentSettings();
+  isSettingsScannerPaused = false;
+  shouldRestartScannerAfterSettings = false;
   barkoderView?.stopScanning();
 }
